@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Go Go!!</title>
+</head>
+<body>
+    <h1>Go Go!!</h1>
+
+    <div id="content"></div>
+
+<script>
+    
+    class Go {
+        API_SERVER = 'http://localhost:5000';
+        APP = null;
+
+        constructor() { 
+            this.APP = document.getElementById('content');
+        }
+
+        getDir(dirName) {
+            fetch(this.API_SERVER + '/dir' + dirName)
+            .then(res => res.text())
+            .then(data => this.renderer(JSON.parse(data), dirName))
+        }
+
+        renderer(data, dirName) {
+            let box = document.createElement('div');
+            let h2 = document.createElement('h2');
+            let ul = document.createElement('ul');
+            h2.innerHTML = dirName;
+
+            if(dirName !== '/') {
+                let li = document.createElement('li');
+                let a = document.createElement('a');
+                let dirs = dirName.split('/');
+                dirs.pop();
+                
+                a.innerText = '..';
+                a.href = "#";
+                a.onclick = (event) => {
+                    event.preventDefault();
+                    this.getDir((dirs.join('/') === "" ? '/' : dirs.join('/')));
+                }
+                li.append(a);
+                ul.append(li);
+            }
+
+            ul.append(...data.map(x => {
+                let li = document.createElement('li');
+                let a = document.createElement('a');
+                let path = x.Path.replace('public', '');
+
+                path = path.length > 1 ? path + '/' : path;
+                a.innerText = x.Name;
+
+                if (x.IsDir) {
+                    a.innerText = a.innerText + '(dir)'
+                    a.href = "#";
+                    a.onclick = (event) => {
+                        event.preventDefault();
+                        this.getDir(path + x.Name);
+                    }
+                } else {
+                    a.download = x.Name;
+                    a.href = this.API_SERVER + '/file' + path + x.Name;
+                }
+
+                li.append(a);
+                return li;
+            }));
+
+            box.append(h2, ul);
+            this.APP.innerHTML = '';
+            this.APP.append(box);
+        }
+    }
+
+    window.onload = async () => {
+        let go = new Go();
+        go.getDir('/');
+    }
+</script>
+</body>
+</html>

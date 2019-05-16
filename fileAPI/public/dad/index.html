@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Go Go!!</title>
+</head>
+<body>
+    <h1>Go Go!!</h1>
+    <img src="http://localhost:5000/file/image.png" alt="a" />
+    <a href="http://localhost:5000/file/index.html">dsadas</a>
+<script>
+    
+    class Go {
+        API_SERVER = 'http://localhost:5000';
+
+        constructor() { }
+
+        getFile(fileName) {
+            fetch(this.API_SERVER + '/file' + fileName)
+            .then(res => console.log(res))
+        }
+
+        getDir(dirName) {
+            return fetch(this.API_SERVER + '/dir' + dirName)
+            .then(res => res.text())
+            .then(data => JSON.parse(data))
+        }
+    }
+
+    window.onload = async () => {
+        let go = new Go();
+        let data = await go.getDir('');
+
+        console.log(data);
+
+    }
+</script>
+</body>
+</html>

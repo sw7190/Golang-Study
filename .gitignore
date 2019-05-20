@@ -1,4 +1,6 @@
-    
+
+golang.org/
+github.com/
 # Binaries for programs and plugins
 *.exe
 *.exe~

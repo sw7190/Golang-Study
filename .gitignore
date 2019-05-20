@@ -1,6 +1,8 @@
 
 golang.org/
 github.com/
+
+debug
 # Binaries for programs and plugins
 *.exe
 *.exe~

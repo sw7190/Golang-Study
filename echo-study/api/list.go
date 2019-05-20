@@ -1,11 +1,36 @@
 package api
 
 import (
+	"echo-study/db"
+	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo"
 )
 
-func getList(c echo.Context) error {
-	return c.String(http.StatusOK, "Hello, World!")
+// TestStruct role table
+type TestStruct struct {
+	RoleID   string `db:"role_id" json:"role_id"`
+	RoleName string `db:"role_name" json:"role_name"`
+}
+
+// GetList test
+func GetList(c echo.Context) error {
+	data := []TestStruct{}
+
+	err := db.DB.Get(&data, "SELECT role_id, role_name FROM role")
+
+	if nil != err {
+		return &echo.HTTPError{
+			Code:     http.StatusInternalServerError,
+			Message:  fmt.Sprintf("failed %v", err),
+			Internal: err,
+		}
+	}
+
+	fmt.Println(data)
+
+	return c.JSON(http.StatusOK, db.HTTPResponseSingle{
+		Data: data,
+	})
 }

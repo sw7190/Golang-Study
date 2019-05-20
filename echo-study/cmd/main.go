@@ -16,15 +16,17 @@ func init() {
 func main() {
 	defer func() {
 		if err := recover(); err != nil {
-			fmt.Println(err)
+			fmt.Println("main1")
 		}
 	}()
 
 	e := echo.New()
-	g := e.Group("/")
-	api.RegisterRoutes(g)
+	// g := e.Group("/")
+	// api.RegisterRoutes(g)
+
+	e.GET("/list", api.GetList)
 
 	if err := e.Start(":5000"); nil != err {
-		fmt.Println(err)
+		fmt.Println("main2")
 	}
 }

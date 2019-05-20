@@ -1,17 +1,30 @@
 package main
 
 import (
-	"net/http"
+	"fmt"
 
 	"github.com/labstack/echo"
+
+	"echo-study/api"
+	"echo-study/db"
 )
 
-func main() {
-	// git user test
-	e := echo.New()
-	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, Wrold!")
-	})
+func init() {
+	db.InitDataBase()
+}
 
-	e.Start(":5000")
+func main() {
+	defer func() {
+		if err := recover(); err != nil {
+			fmt.Println(err)
+		}
+	}()
+
+	e := echo.New()
+	g := e.Group("/")
+	api.RegisterRoutes(g)
+
+	if err := e.Start(":5000"); nil != err {
+		fmt.Println(err)
+	}
 }

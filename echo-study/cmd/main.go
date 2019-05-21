@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/labstack/echo"
 
 	"echo-study/api"
@@ -16,7 +14,7 @@ func init() {
 func main() {
 	defer func() {
 		if err := recover(); err != nil {
-			fmt.Println("main1")
+
 		}
 	}()
 
@@ -27,6 +25,5 @@ func main() {
 	e.GET("/list", api.GetList)
 
 	if err := e.Start(":5000"); nil != err {
-		fmt.Println("main2")
 	}
 }

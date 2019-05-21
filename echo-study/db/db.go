@@ -14,12 +14,6 @@ type database struct {
 	connStr string
 }
 
-// TestStruct role table
-type TestStruct struct {
-	RoleID   string `db:"role_id" json:"role_id"`
-	RoleName string `db:"role_name" json:"role_name"`
-}
-
 // DB database pointer var
 var DB *database
 
@@ -42,29 +36,19 @@ func InitDataBase() error {
 		dbname,
 		sslmode)
 
-	DB := &database{connStr: psqlInfo}
+	DB = &database{connStr: psqlInfo}
 
 	if err := DB.Connect(); nil != err {
 		return err
 	}
 
-	data := TestStruct{}
-	err := DB.Get(&data, "SELECT role_id, role_name FROM role")
-
-	if nil != err {
-		fmt.Println(err)
-	}
-
-	fmt.Println(data)
+	defer DB.Disconnect()
 
 	return nil
 }
 
 func (selfDB *database) Connect() error {
-	fmt.Println(selfDB.conn)
-
-	if selfDB.conn == nil {
-
+	if nil == selfDB.conn {
 		db, err := sqlx.Connect("postgres", selfDB.connStr)
 		if nil != err {
 			return err
@@ -74,9 +58,7 @@ func (selfDB *database) Connect() error {
 		}
 
 		db.SetMaxOpenConns(200)
-		fmt.Println(db)
 		selfDB.conn = db
-		fmt.Println(selfDB.conn)
 	}
 
 	return nil
@@ -94,10 +76,26 @@ func (selfDB *database) Disconnect() error {
 	return nil
 }
 
-func (selfDB *database) Get(data interface{}, query string, args ...interface{}) error {
-	if err := selfDB.Connect(); nil != err {
-		return err
+func (selfDB *database) Get(dest interface{}, query string, args ...interface{}) error {
+	fmt.Println(selfDB.conn)
+	fmt.Println(DB.conn)
+	if nil == selfDB.conn {
+		if err := selfDB.Connect(); nil != err {
+			return err
+		}
 	}
 
-	return selfDB.conn.Get(data, query, args...)
+	return selfDB.conn.Get(dest, query, args...)
+}
+
+func (selfDB *database) Select(data interface{}, query string, args ...interface{}) error {
+	fmt.Println(selfDB)
+	fmt.Println(DB)
+	if nil == selfDB.conn {
+		if err := selfDB.Connect(); nil != err {
+			return err
+		}
+	}
+
+	return selfDB.conn.Select(data, query, args...)
 }

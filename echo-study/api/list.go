@@ -18,7 +18,7 @@ type TestStruct struct {
 func GetList(c echo.Context) error {
 	data := []TestStruct{}
 
-	err := db.DB.Get(&data, "SELECT role_id, role_name FROM role")
+	err := db.DB.Select(&data, "SELECT role_id, role_name FROM role")
 
 	if nil != err {
 		return &echo.HTTPError{
@@ -27,8 +27,6 @@ func GetList(c echo.Context) error {
 			Internal: err,
 		}
 	}
-
-	fmt.Println(data)
 
 	return c.JSON(http.StatusOK, db.HTTPResponseSingle{
 		Data: data,

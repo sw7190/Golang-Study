@@ -77,8 +77,6 @@ func (selfDB *database) Disconnect() error {
 }
 
 func (selfDB *database) Get(dest interface{}, query string, args ...interface{}) error {
-	fmt.Println(selfDB.conn)
-	fmt.Println(DB.conn)
 	if nil == selfDB.conn {
 		if err := selfDB.Connect(); nil != err {
 			return err
@@ -89,8 +87,6 @@ func (selfDB *database) Get(dest interface{}, query string, args ...interface{})
 }
 
 func (selfDB *database) Select(data interface{}, query string, args ...interface{}) error {
-	fmt.Println(selfDB)
-	fmt.Println(DB)
 	if nil == selfDB.conn {
 		if err := selfDB.Connect(); nil != err {
 			return err
